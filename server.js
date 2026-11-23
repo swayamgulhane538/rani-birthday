@@ -17,6 +17,8 @@ const MIME_TYPES = {
   '.gif': 'image/gif',
   '.webp': 'image/webp',
   '.mp3': 'audio/mpeg',
+  '.mp4': 'audio/mp4',
+  '.m4a': 'audio/mp4',
   '.wav': 'audio/wav',
   '.ico': 'image/x-icon'
 };
@@ -51,7 +53,7 @@ const server = http.createServer((req, res) => {
     const contentType = MIME_TYPES[ext] || 'application/octet-stream';
 
     // Support audio Range requests (for smooth audio streaming / scrubbing)
-    if (ext === '.mp3' || ext === '.wav') {
+    if (ext === '.mp3' || ext === '.wav' || ext === '.mp4' || ext === '.m4a') {
       const range = req.headers.range;
       const totalSize = stats.size;
 
