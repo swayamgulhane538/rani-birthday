@@ -1,0 +1,1770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+  <title>Happy Birthday Ranu ❤️ | Forever Yours, Swayam</title>
+  
+  <!-- SEO & Open Graph Meta Tags -->
+  <meta name="description" content="A magical 3D birthday gift from Swayam to his beloved girlfriend Ranu. Celebrating 3 months of love & a lifetime ahead.">
+  <meta name="theme-color" content="#22040e">
+
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💖</text></svg>">
+
+  <!-- Google Fonts: Great Vibes, Playfair Display, Poppins, Dancing Script -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- External Libraries (CDNs) -->
+  <!-- Three.js for 3D Background & 3D Particle Heart -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <!-- GSAP for Smooth Animations -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <!-- Canvas Confetti for Fireworks & Celebrations -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ==============================================
+       1. PERSISTENT 3D BACKGROUND CANVAS
+       ============================================== -->
+  <canvas id="webgl-canvas"></canvas>
+
+  <!-- Ambient Light Glow Vignette -->
+  <div class="ambient-glow"></div>
+
+  <!-- Scroll Progress Bar -->
+  <div class="scroll-progress-container">
+    <div class="scroll-progress-bar" id="progressBar"></div>
+  </div>
+
+  <!-- ==============================================
+       PERSISTENT FLOATING MUSIC CONTROLLER
+       ============================================== -->
+  <div class="music-pill" id="musicPill" title="Toggle Romantic Song">
+    <div class="vinyl-disc" id="vinylDisc">
+      <div class="vinyl-center"></div>
+    </div>
+    <div class="music-info">
+      <span class="music-title">Ishq Wala Love</span>
+      <div class="equalizer" id="equalizer">
+        <span class="eq-bar"></span>
+        <span class="eq-bar"></span>
+        <span class="eq-bar"></span>
+        <span class="eq-bar"></span>
+      </div>
+    </div>
+    <button class="music-btn" id="musicToggleBtn" aria-label="Play / Pause Music">
+      <svg class="icon-pause" id="iconPause" viewBox="0 0 24 24" fill="currentColor">
+        <rect x="6" y="4" width="4" height="16" rx="2"></rect>
+        <rect x="14" y="4" width="4" height="16" rx="2"></rect>
+      </svg>
+      <svg class="icon-play" id="iconPlay" viewBox="0 0 24 24" fill="currentColor" style="display: none;">
+        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Background Music Audio Element -->
+  <audio id="bgMusic" loop preload="auto">
+    <source src="song.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+  </audio>
+
+
+  <!-- ==============================================
+       1. OPENING SCREEN: THE GLOWING GIFT BOX
+       ============================================== -->
+  <section class="opening-overlay" id="openingScreen">
+    <div class="opening-particles" id="openingParticles"></div>
+
+    <div class="gift-scene">
+      <div class="surprise-pretitle">A special surprise for someone extraordinary...</div>
+      
+      <!-- 3D Interactive Glowing Gift Box -->
+      <div class="gift-box-wrap" id="giftBoxWrap" role="button" tabindex="0" aria-label="Tap to open your surprise">
+        <div class="gift-halo"></div>
+        <div class="gift-sparkles-ambient"></div>
+        
+        <div class="gift-box" id="giftBox">
+          <!-- Lid -->
+          <div class="gift-lid" id="giftLid">
+            <div class="gift-bow">
+              <span class="bow-loop left"></span>
+              <span class="bow-loop right"></span>
+              <span class="bow-ribbon-tail left"></span>
+              <span class="bow-ribbon-tail right"></span>
+              <span class="bow-center"></span>
+            </div>
+            <div class="ribbon-v"></div>
+            <div class="ribbon-h"></div>
+          </div>
+          <!-- Box Body -->
+          <div class="gift-body">
+            <div class="ribbon-v"></div>
+            <div class="ribbon-h"></div>
+            <!-- Gift Tag -->
+            <div class="gift-tag">
+              <span>For Ranu 💖</span>
+            </div>
+            <!-- Internal Glow for Opening Animation -->
+            <div class="box-interior-glow" id="boxInteriorGlow"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Opening Screen Text -->
+      <h1 class="opening-title">Ranu, tumhare liye ek surprise hai 💖</h1>
+      <p class="opening-subtitle">Tap the gift box to unlock your magical world</p>
+      
+      <button class="open-gift-btn pulse-glow" id="openGiftBtn">
+        <span>Tap to Open Surprise 🎁</span>
+      </button>
+
+      <div class="sound-notice">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+          <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+        </svg>
+        <span>Music will begin playing automatically</span>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ==============================================
+       MAIN WEBSITE CONTENT (Appears after box opens)
+       ============================================== -->
+  <main class="main-content" id="mainContent">
+
+    <!-- ==============================================
+         2. HERO SECTION
+         ============================================== -->
+    <section class="hero-section" id="heroSection">
+      <div class="hero-container">
+        
+        <!-- Romantic Date Badge -->
+        <div class="date-badge">
+          <span class="badge-icon">✨</span>
+          <span class="badge-text">26 NOV • Ranu's Special Day</span>
+          <span class="badge-icon">✨</span>
+        </div>
+
+        <!-- Big Animated Text -->
+        <h1 class="hero-title" id="heroTitle">
+          Happy Birthday <span class="highlight-name">Ranu</span> <span class="hero-heart">❤️</span>
+        </h1>
+
+        <!-- Subtitle with Typing / Shimmer Effect -->
+        <p class="hero-subtitle" id="heroSubtitle">
+          To the queen of my heart, my sweetest girl, and my greatest blessing.
+        </p>
+
+        <!-- Romantic Counter Pills -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <span class="stat-num" id="daysCount">90+</span>
+            <span class="stat-label">Days of Love</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-num">2,160+</span>
+            <span class="stat-label">Hours of Magic</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-num">1</span>
+            <span class="stat-label">My Only Ranu</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-num">∞</span>
+            <span class="stat-label">Eternal Love</span>
+          </div>
+        </div>
+
+        <!-- FEATURE 5: LIVE BIRTHDAY COUNTDOWN 🎂 -->
+        <div class="countdown-wrapper" id="countdownWrapper">
+          <div class="countdown-header">
+            <span class="countdown-tag">🎂 LIVE BIRTHDAY COUNTDOWN 🎂</span>
+            <div class="countdown-target-pill">26 November • The Day My Angel Was Born</div>
+          </div>
+          <div class="countdown-clock" id="countdownClock">
+            <div class="countdown-box">
+              <span class="countdown-digit" id="cdDays">00</span>
+              <span class="countdown-lbl">Days</span>
+            </div>
+            <span class="countdown-colon">:</span>
+            <div class="countdown-box">
+              <span class="countdown-digit" id="cdHours">00</span>
+              <span class="countdown-lbl">Hours</span>
+            </div>
+            <span class="countdown-colon">:</span>
+            <div class="countdown-box">
+              <span class="countdown-digit" id="cdMinutes">00</span>
+              <span class="countdown-lbl">Minutes</span>
+            </div>
+            <span class="countdown-colon">:</span>
+            <div class="countdown-box">
+              <span class="countdown-digit" id="cdSeconds">00</span>
+              <span class="countdown-lbl">Seconds</span>
+            </div>
+          </div>
+          <p class="countdown-status" id="countdownStatus">Every second brings me closer to celebrating you ❤️</p>
+        </div>
+
+        <!-- Scroll Indicator -->
+        <div class="scroll-indicator" id="scrollIndicator">
+          <span class="scroll-text">Scroll to explore our story</span>
+          <div class="mouse-icon">
+            <div class="mouse-wheel"></div>
+          </div>
+          <svg class="scroll-arrow" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M7 10l5 5 5-5"/>
+          </svg>
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- ==============================================
+         FEATURE 1: MY VOICE, MY WISHES 🎧
+         ============================================== -->
+    <section class="voice-section" id="voiceSection">
+      <div class="section-header">
+        <span class="section-tag">🎧 FROM SWAYAM'S HEART 🎧</span>
+        <h2 class="section-title">My Voice, My Wishes</h2>
+        <p class="section-subtitle">"Listen to my voice whenever you miss me."</p>
+      </div>
+
+      <div class="voice-player-card">
+        <div class="voice-glow-ring"></div>
+        <div class="voice-heart-avatar">
+          <span class="voice-avatar-icon">🎙️</span>
+          <div class="voice-pulsing-heart" id="voiceHeartPulse">💖</div>
+        </div>
+
+        <div class="voice-content">
+          <h3 class="voice-title">A Special Voice Note For Ranu</h3>
+          <p class="voice-sub">Recorded with endless love by Swayam</p>
+
+          <!-- Animated Audio Waveform -->
+          <div class="waveform-container" id="waveformContainer">
+            <div class="waveform-bar"></div><div class="waveform-bar"></div><div class="waveform-bar"></div><div class="waveform-bar"></div>
+            <div class="waveform-bar"></div><div class="waveform-bar"></div><div class="waveform-bar"></div><div class="waveform-bar"></div>
+            <div class="waveform-bar"></div><div class="waveform-bar"></div><div class="waveform-bar"></div><div class="waveform-bar"></div>
+            <div class="waveform-bar"></div><div class="waveform-bar"></div><div class="waveform-bar"></div><div class="waveform-bar"></div>
+            <div class="waveform-bar"></div><div class="waveform-bar"></div><div class="waveform-bar"></div><div class="waveform-bar"></div>
+            <div class="waveform-bar"></div><div class="waveform-bar"></div><div class="waveform-bar"></div><div class="waveform-bar"></div>
+          </div>
+
+          <!-- Progress and Timing -->
+          <div class="voice-timing">
+            <span id="voiceCurrentTime">0:00</span>
+            <div class="voice-seek-bar" id="voiceSeekBar">
+              <div class="voice-seek-fill" id="voiceSeekFill"></div>
+            </div>
+            <span id="voiceDuration">0:06</span>
+          </div>
+
+          <!-- Controls -->
+          <div class="voice-controls">
+            <button class="voice-play-btn pulse-glow" id="voicePlayBtn" aria-label="Play Voice Message">
+              <svg class="v-play-icon" id="vPlayIcon" viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+              </svg>
+              <svg class="v-pause-icon" id="vPauseIcon" viewBox="0 0 24 24" width="22" height="22" fill="currentColor" style="display: none;">
+                <rect x="6" y="4" width="4" height="16" rx="2"></rect>
+                <rect x="14" y="4" width="4" height="16" rx="2"></rect>
+              </svg>
+              <span id="voiceBtnText">Play My Voice Note 💖</span>
+            </button>
+          </div>
+
+          <div class="voice-replace-hint">
+            <small>💡 Swayam: Replace <code>voice.mp3</code> with your real voice recording anytime!</small>
+          </div>
+        </div>
+
+        <!-- Hidden audio element for voice note -->
+        <audio id="voiceAudio" preload="auto">
+          <source src="voice.mp3" type="audio/mpeg">
+        </audio>
+      </div>
+    </section>
+
+
+    <!-- ==============================================
+         3. 3D PHOTO GALLERY (Interactive 3D Carousel)
+         ============================================== -->
+    <section class="gallery-section" id="gallerySection">
+      <div class="section-header">
+        <span class="section-tag">✨ OUR SWEET MOMENTS ✨</span>
+        <h2 class="section-title">3 Months of Pure Magic</h2>
+        <p class="section-subtitle">Swipe or tap any photo to relive our sweetest memories together</p>
+      </div>
+
+      <!-- 3D Carousel Container -->
+      <div class="carousel-container" id="carouselContainer">
+        
+        <button class="carousel-nav-btn prev" id="carouselPrev" aria-label="Previous photo">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M15 18l-6-6 6-6"/>
+          </svg>
+        </button>
+
+        <div class="carousel-track-wrapper">
+          <div class="carousel-track" id="carouselTrack">
+
+            <!-- Photo Card 1 -->
+            <div class="photo-card" data-index="0" data-title="Our Sweet Little World" data-caption="When I looked into your eyes and knew my wandering heart had finally found its forever home.">
+              <div class="card-glass-frame">
+                <div class="card-tag">Memory #01</div>
+                <div class="img-wrapper">
+                  <img src="images/photo1.jpg" alt="Swayam &amp; Ranu - Cute Selfie" loading="lazy">
+                  <div class="img-overlay">
+                    <span class="zoom-pill">Tap to expand 🔍</span>
+                  </div>
+                </div>
+                <div class="card-caption">
+                  <h3>Our Sweet Little World</h3>
+                  <p>When my heart found its home...</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Photo Card 2 -->
+            <div class="photo-card" data-index="1" data-title="Royal Grace &amp; Elegance" data-caption="Looking at you under the chandelier lights, you looked like a queen straight out of a royal fairytale.">
+              <div class="card-glass-frame">
+                <div class="card-tag">Memory #02</div>
+                <div class="img-wrapper">
+                  <img src="images/photo2.jpg" alt="Ranu in Purple Gown" loading="lazy">
+                  <div class="img-overlay">
+                    <span class="zoom-pill">Tap to expand 🔍</span>
+                  </div>
+                </div>
+                <div class="card-caption">
+                  <h3>Royal Grace &amp; Elegance</h3>
+                  <p>A queen from a fairytale...</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Photo Card 3 -->
+            <div class="photo-card" data-index="2" data-title="That Irreplaceable Smile" data-caption="That backward glance and your radiant smile can brighten up my darkest days in a single second.">
+              <div class="card-glass-frame">
+                <div class="card-tag">Memory #03</div>
+                <div class="img-wrapper">
+                  <img src="images/photo3.jpg" alt="Ranu Radiant Smile" loading="lazy">
+                  <div class="img-overlay">
+                    <span class="zoom-pill">Tap to expand 🔍</span>
+                  </div>
+                </div>
+                <div class="card-caption">
+                  <h3>That Irreplaceable Smile</h3>
+                  <p>Lighting up my whole universe...</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Photo Card 4 -->
+            <div class="photo-card" data-index="3" data-title="My Stylish Queen" data-caption="Traditional grace with that playful swag! Only my Ranu can pull off shades with a saree so effortlessly.">
+              <div class="card-glass-frame">
+                <div class="card-tag">Memory #04</div>
+                <div class="img-wrapper">
+                  <img src="images/photo4.jpg" alt="Ranu in Green Saree with Shades" loading="lazy">
+                  <div class="img-overlay">
+                    <span class="zoom-pill">Tap to expand 🔍</span>
+                  </div>
+                </div>
+                <div class="card-caption">
+                  <h3>My Stylish Queen</h3>
+                  <p>Swag meets traditional beauty...</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Photo Card 5 -->
+            <div class="photo-card" data-index="4" data-title="Pretty in Pink" data-caption="Your innocence, your laughter, and the way you play with your hair always makes my heart skip a beat.">
+              <div class="card-glass-frame">
+                <div class="card-tag">Memory #05</div>
+                <div class="img-wrapper">
+                  <img src="images/photo5.jpg" alt="Ranu in Pink Suit" loading="lazy">
+                  <div class="img-overlay">
+                    <span class="zoom-pill">Tap to expand 🔍</span>
+                  </div>
+                </div>
+                <div class="card-caption">
+                  <h3>Pretty in Pink</h3>
+                  <p>Still giving me butterflies...</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Photo Card 6 -->
+            <div class="photo-card" data-index="5" data-title="Breathtaking in Red" data-caption="Every time you dress in red, you leave me completely speechless. So pure, so stunning, so mine.">
+              <div class="card-glass-frame">
+                <div class="card-tag">Memory #06</div>
+                <div class="img-wrapper">
+                  <img src="images/photo6.jpg" alt="Ranu in Red Traditional Saree" loading="lazy">
+                  <div class="img-overlay">
+                    <span class="zoom-pill">Tap to expand 🔍</span>
+                  </div>
+                </div>
+                <div class="card-caption">
+                  <h3>Breathtaking in Red</h3>
+                  <p>Completely taking my breath away...</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Photo Card 7 -->
+            <div class="photo-card" data-index="6" data-title="Made For Each Other" data-caption="Standing side-by-side in matching colors. We weren't just made for each other, we were chosen by destiny.">
+              <div class="card-glass-frame">
+                <div class="card-tag">Memory #07</div>
+                <div class="img-wrapper">
+                  <img src="images/photo7.jpg" alt="Swayam &amp; Ranu in Festive Green" loading="lazy">
+                  <div class="img-overlay">
+                    <span class="zoom-pill">Tap to expand 🔍</span>
+                  </div>
+                </div>
+                <div class="card-caption">
+                  <h3>Made For Each Other</h3>
+                  <p>Swayam &amp; Ranu in matching green...</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Photo Card 8 -->
+            <div class="photo-card" data-index="7" data-title="My Safe Haven &amp; Warmest Hug" data-caption="In your tight embrace, all the noise in the world disappears. You are my peace, my solace, my home.">
+              <div class="card-glass-frame">
+                <div class="card-tag">Memory #08</div>
+                <div class="img-wrapper">
+                  <img src="images/photo8.jpg" alt="Ranu Hugging Swayam" loading="lazy">
+                  <div class="img-overlay">
+                    <span class="zoom-pill">Tap to expand 🔍</span>
+                  </div>
+                </div>
+                <div class="card-caption">
+                  <h3>My Safe Haven</h3>
+                  <p>In your warm embrace...</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Photo Card 9 -->
+            <div class="photo-card" data-index="8" data-title="3 Months of Pure Magic" data-caption="90 days of waking up next to you, laughing, teasing, and falling deeper in love every single morning.">
+              <div class="card-glass-frame">
+                <div class="card-tag">Memory #09</div>
+                <div class="img-wrapper">
+                  <img src="images/photo9.jpg" alt="Swayam &amp; Ranu Close-Up Selfie" loading="lazy">
+                  <div class="img-overlay">
+                    <span class="zoom-pill">Tap to expand 🔍</span>
+                  </div>
+                </div>
+                <div class="card-caption">
+                  <h3>3 Months of Pure Magic</h3>
+                  <p>Living my dream with you...</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Photo Card 10 -->
+            <div class="photo-card" data-index="9" data-title="Holding Your Hand Forever" data-caption="Holding your hand through every high, every low, and every lifetime ahead. Forever yours, Ranu ❤️">
+              <div class="card-glass-frame">
+                <div class="card-tag">Memory #10</div>
+                <div class="img-wrapper">
+                  <img src="images/photo10.jpg" alt="Ranu's Mehendi Hand on Swayam's Arm" loading="lazy">
+                  <div class="img-overlay">
+                    <span class="zoom-pill">Tap to expand 🔍</span>
+                  </div>
+                </div>
+                <div class="card-caption">
+                  <h3>Holding Your Hand Forever</h3>
+                  <p>Forever and always, Ranu ❤️</p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <button class="carousel-nav-btn next" id="carouselNext" aria-label="Next photo">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M9 18l6-6-6-6"/>
+          </svg>
+        </button>
+
+      </div>
+
+      <!-- Carousel Pagination Dots -->
+      <div class="carousel-dots" id="carouselDots"></div>
+    </section>
+
+
+    <!-- ==============================================
+         PHOTO LIGHTBOX MODAL (Tap to Zoom)
+         ============================================== -->
+    <div class="lightbox-modal" id="lightboxModal">
+      <div class="lightbox-backdrop" id="lightboxBackdrop"></div>
+      <div class="lightbox-content">
+        <button class="lightbox-close" id="lightboxClose" aria-label="Close photo">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M18 6L6 18M6 6l12 12"/>
+          </svg>
+        </button>
+        <div class="lightbox-image-box">
+          <img id="lightboxImg" src="" alt="Enlarged Memory">
+          <div class="floating-hearts-effect" id="lightboxHearts"></div>
+        </div>
+        <div class="lightbox-text">
+          <h3 id="lightboxTitle">Memory Title</h3>
+          <p id="lightboxCaption">Memory caption goes here...</p>
+          <div class="lightbox-footer">
+            <span class="lightbox-badge">Swayam &amp; Ranu • 26 NOV</span>
+            <button class="love-reaction-btn" id="loveReactionBtn">
+              <span>Send Love</span> ❤️ <span id="reactionCount">1</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ==============================================
+         SECTION 1: 10 REASONS WHY YOU ARE SPECIAL ❤️
+         ============================================== -->
+    <section class="reasons-section" id="reasonsSection">
+      <div class="section-header">
+        <span class="section-tag">✨ FOR MY FAVORITE PERSON ✨</span>
+        <h2 class="section-title">10 Reasons Why You Are Special ❤️</h2>
+        <p class="section-subtitle">Tap each card to reveal what makes you so irreplaceable in my life, Ranu</p>
+        <div class="reasons-counter-badge">
+          <span>Reasons Unlocked:</span>
+          <strong id="reasonsOpenedCount">0</strong> / <strong>10</strong>
+          <span class="counter-sparkle">💖</span>
+        </div>
+      </div>
+
+      <!-- 10 Interactive 3D Glassmorphism Cards Grid -->
+      <div class="reasons-grid" id="reasonsGrid">
+        
+        <!-- Reason 1 -->
+        <div class="reason-card" data-reason="1" role="button" tabindex="0">
+          <div class="reason-card-inner">
+            <div class="reason-front">
+              <span class="reason-num">#01</span>
+              <div class="reason-icon-circle">😊</div>
+              <h3 class="reason-title">Your Beautiful Smile</h3>
+              <span class="reason-tap-hint">Tap to reveal ✨</span>
+            </div>
+            <div class="reason-back">
+              <span class="reason-back-badge">Reason #01</span>
+              <h4 class="reason-back-title">Your Beautiful Smile</h4>
+              <p class="reason-desc">Your smile has this magical superpower to wash away my heaviest days. Every time I see you smile, my entire world lights up in colors I never knew existed.</p>
+              <div class="reason-heart-stamp">💖</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reason 2 -->
+        <div class="reason-card" data-reason="2" role="button" tabindex="0">
+          <div class="reason-card-inner">
+            <div class="reason-front">
+              <span class="reason-num">#02</span>
+              <div class="reason-icon-circle">🌸</div>
+              <h3 class="reason-title">Your Caring Nature</h3>
+              <span class="reason-tap-hint">Tap to reveal ✨</span>
+            </div>
+            <div class="reason-back">
+              <span class="reason-back-badge">Reason #02</span>
+              <h4 class="reason-back-title">Your Caring Nature</h4>
+              <p class="reason-desc">The way you check up on me, worry about little things, and wrap me in your warmth is the purest kind of love I have ever known. You always put others before yourself.</p>
+              <div class="reason-heart-stamp">💖</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reason 3 -->
+        <div class="reason-card" data-reason="3" role="button" tabindex="0">
+          <div class="reason-card-inner">
+            <div class="reason-front">
+              <span class="reason-num">#03</span>
+              <div class="reason-icon-circle">💭</div>
+              <h3 class="reason-title">The Way You Understand Me</h3>
+              <span class="reason-tap-hint">Tap to reveal ✨</span>
+            </div>
+            <div class="reason-back">
+              <span class="reason-back-badge">Reason #03</span>
+              <h4 class="reason-back-title">The Way You Understand Me</h4>
+              <p class="reason-desc">You understand my unspoken thoughts before I even utter a word. In a world full of noise, your presence is my true silence and comfort.</p>
+              <div class="reason-heart-stamp">💖</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reason 4 -->
+        <div class="reason-card" data-reason="4" role="button" tabindex="0">
+          <div class="reason-card-inner">
+            <div class="reason-front">
+              <span class="reason-num">#04</span>
+              <div class="reason-icon-circle">🎀</div>
+              <h3 class="reason-title">Your Cute Little Habits</h3>
+              <span class="reason-tap-hint">Tap to reveal ✨</span>
+            </div>
+            <div class="reason-back">
+              <span class="reason-back-badge">Reason #04</span>
+              <h4 class="reason-back-title">Your Cute Little Habits</h4>
+              <p class="reason-desc">The way you laugh at silly jokes, make that adorable face when you are thinking, and play with your hair—I adore every single sweet quirk of yours.</p>
+              <div class="reason-heart-stamp">💖</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reason 5 -->
+        <div class="reason-card" data-reason="5" role="button" tabindex="0">
+          <div class="reason-card-inner">
+            <div class="reason-front">
+              <span class="reason-num">#05</span>
+              <div class="reason-icon-circle">🤝</div>
+              <h3 class="reason-title">Your Support</h3>
+              <span class="reason-tap-hint">Tap to reveal ✨</span>
+            </div>
+            <div class="reason-back">
+              <span class="reason-back-badge">Reason #05</span>
+              <h4 class="reason-back-title">Your Support</h4>
+              <p class="reason-desc">Having you stand beside me gives me courage I never knew I possessed. With you holding my hand, I feel ready to take on whatever life brings our way.</p>
+              <div class="reason-heart-stamp">💖</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reason 6 -->
+        <div class="reason-card" data-reason="6" role="button" tabindex="0">
+          <div class="reason-card-inner">
+            <div class="reason-front">
+              <span class="reason-num">#06</span>
+              <div class="reason-icon-circle">🕊️</div>
+              <h3 class="reason-title">Your Innocence</h3>
+              <span class="reason-tap-hint">Tap to reveal ✨</span>
+            </div>
+            <div class="reason-back">
+              <span class="reason-back-badge">Reason #06</span>
+              <h4 class="reason-back-title">Your Innocence</h4>
+              <p class="reason-desc">Your pure, gentle heart is the rarest gem in this world. Your innocence and genuine sweetness make me fall in love with you all over again every day.</p>
+              <div class="reason-heart-stamp">💖</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reason 7 -->
+        <div class="reason-card" data-reason="7" role="button" tabindex="0">
+          <div class="reason-card-inner">
+            <div class="reason-front">
+              <span class="reason-num">#07</span>
+              <div class="reason-icon-circle">✨</div>
+              <h3 class="reason-title">Your Beautiful Heart</h3>
+              <span class="reason-tap-hint">Tap to reveal ✨</span>
+            </div>
+            <div class="reason-back">
+              <span class="reason-back-badge">Reason #07</span>
+              <h4 class="reason-back-title">Your Beautiful Heart</h4>
+              <p class="reason-desc">You have a heart made of gold that only knows how to love deeply, forgive effortlessly, and spread happiness everywhere you step.</p>
+              <div class="reason-heart-stamp">💖</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reason 8 -->
+        <div class="reason-card" data-reason="8" role="button" tabindex="0">
+          <div class="reason-card-inner">
+            <div class="reason-front">
+              <span class="reason-num">#08</span>
+              <div class="reason-icon-circle">☀️</div>
+              <h3 class="reason-title">The Happiness You Bring</h3>
+              <span class="reason-tap-hint">Tap to reveal ✨</span>
+            </div>
+            <div class="reason-back">
+              <span class="reason-back-badge">Reason #08</span>
+              <h4 class="reason-back-title">The Happiness You Bring</h4>
+              <p class="reason-desc">Ever since you walked into my life, ordinary moments feel like poetry. You brought sunshine, laughter, and endless colors into my life.</p>
+              <div class="reason-heart-stamp">💖</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reason 9 -->
+        <div class="reason-card" data-reason="9" role="button" tabindex="0">
+          <div class="reason-card-inner">
+            <div class="reason-front">
+              <span class="reason-num">#09</span>
+              <div class="reason-icon-circle">📸</div>
+              <h3 class="reason-title">Our Beautiful Memories</h3>
+              <span class="reason-tap-hint">Tap to reveal ✨</span>
+            </div>
+            <div class="reason-back">
+              <span class="reason-back-badge">Reason #09</span>
+              <h4 class="reason-back-title">Our Beautiful Memories</h4>
+              <p class="reason-desc">Every call, every walk, every tight hug, every shared laugh—each memory we have built together is the most valuable treasure I will ever own.</p>
+              <div class="reason-heart-stamp">💖</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reason 10 -->
+        <div class="reason-card highlight-reason" data-reason="10" role="button" tabindex="0">
+          <div class="reason-card-inner">
+            <div class="reason-front">
+              <span class="reason-num gold">#10</span>
+              <div class="reason-icon-circle gold">👑</div>
+              <h3 class="reason-title">Simply Because You Are Ranu</h3>
+              <span class="reason-tap-hint">Tap to reveal ✨</span>
+            </div>
+            <div class="reason-back">
+              <span class="reason-back-badge gold">Reason #10</span>
+              <h4 class="reason-back-title">Simply Because You Are Ranu</h4>
+              <p class="reason-desc">Above all the reasons in this world, I love you simply because you are YOU. My queen, my best friend, my soulmate, and my forever girl.</p>
+              <div class="reason-heart-stamp">💖</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Grand Heart Celebration Modal when all 10 are unlocked -->
+      <div class="all-reasons-modal" id="allReasonsModal">
+        <div class="all-reasons-card">
+          <div class="grand-beating-heart">💖</div>
+          <h3 class="grand-heart-title">All 10 Reasons Unlocked! ✨</h3>
+          <p class="grand-heart-text">
+            "The truth is, Ranu... 10 reasons could never be enough to capture how much you mean to me. There are infinite reasons why my soul chose you. Happy Birthday, my love! ❤️"
+          </p>
+          <button class="grand-heart-close-btn" id="closeReasonsModalBtn">
+            <span>Keep Admiring Our Love ❤️</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ==============================================
+         SECTION 2: OUR BEAUTIFUL LOVE STORY 🫶 (TIMELINE)
+         ============================================== -->
+    <section class="timeline-section" id="timelineSection">
+      <div class="section-header">
+        <span class="section-tag">✨ OUR BEAUTIFUL LOVE STORY 🫶 ✨</span>
+        <h2 class="section-title">Our Beautiful Journey Together</h2>
+        <p class="section-subtitle">Every milestone, every smile, and every heartbeat that brought us to today</p>
+      </div>
+
+      <div class="timeline-container">
+        <!-- Glowing Connecting Line -->
+        <div class="timeline-line" id="timelineLine"></div>
+
+        <!-- Dynamic Timeline Items Wrapper (Loaded from editable timelineData in script.js) -->
+        <div class="timeline-items-wrapper" id="timelineItemsWrapper">
+
+          <!-- Moment 1: The Day We Met -->
+          <div class="timeline-item" data-milestone="1">
+            <div class="timeline-node"><span class="node-icon">✨</span></div>
+            <div class="timeline-card">
+              <div class="timeline-img-holder">
+                <img src="images/photo1.jpg" alt="The Day We Met" loading="lazy">
+                <span class="timeline-img-badge">Destiny ❤️</span>
+              </div>
+              <span class="milestone-badge">The Beginning</span>
+              <h3 class="milestone-title">The Day We Met</h3>
+              <p class="milestone-desc">
+                The moment destiny smiled and our paths crossed. A simple hello that sparked a connection unlike anything I had ever felt before.
+              </p>
+              <div class="milestone-footer">
+                <span>💖 The day my forever started</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Moment 2: Our First Conversation -->
+          <div class="timeline-item" data-milestone="2">
+            <div class="timeline-node"><span class="node-icon">☕</span></div>
+            <div class="timeline-card">
+              <div class="timeline-img-holder">
+                <img src="images/photo9.jpg" alt="Our First Conversation" loading="lazy">
+                <span class="timeline-img-badge">First Talks 🌙</span>
+              </div>
+              <span class="milestone-badge">Falling In Love</span>
+              <h3 class="milestone-title">Our First Conversation</h3>
+              <p class="milestone-desc">
+                From shy hellos to talking for hours without looking at the clock. Late night conversations where I realized your soul matched mine completely.
+              </p>
+              <div class="milestone-footer">
+                <span>🌙 When hours felt like seconds</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Moment 3: Our First Special Moment -->
+          <div class="timeline-item" data-milestone="3">
+            <div class="timeline-node"><span class="node-icon">💍</span></div>
+            <div class="timeline-card">
+              <div class="timeline-img-holder">
+                <img src="images/photo3.jpg" alt="Our First Special Moment" loading="lazy">
+                <span class="timeline-img-badge">Magic ✨</span>
+              </div>
+              <span class="milestone-badge">The Spark</span>
+              <h3 class="milestone-title">Our First Special Moment</h3>
+              <p class="milestone-desc">
+                That unforgettable moment when our eyes locked, the world vanished, and I knew deep down in my heart that you were the one.
+              </p>
+              <div class="milestone-footer">
+                <span>✨ Pure magic in your eyes</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Moment 4: Our Favourite Memories -->
+          <div class="timeline-item" data-milestone="4">
+            <div class="timeline-node"><span class="node-icon">🌸</span></div>
+            <div class="timeline-card">
+              <div class="timeline-img-holder">
+                <img src="images/photo7.jpg" alt="Our Favourite Memories" loading="lazy">
+                <span class="timeline-img-badge">Together 💖</span>
+              </div>
+              <span class="milestone-badge">Precious Moments</span>
+              <h3 class="milestone-title">Our Favourite Memories</h3>
+              <p class="milestone-desc">
+                Dressing up together in matching colors, teasing each other, sharing inside jokes, and laughing until our stomachs hurt. Every memory with you is golden.
+              </p>
+              <div class="milestone-footer">
+                <span>🌸 The sweetest chapters of our story</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Moment 5: The Moments That Made Us Smile -->
+          <div class="timeline-item" data-milestone="5">
+            <div class="timeline-node"><span class="node-icon">🏡</span></div>
+            <div class="timeline-card">
+              <div class="timeline-img-holder">
+                <img src="images/photo8.jpg" alt="The Moments That Made Us Smile" loading="lazy">
+                <span class="timeline-img-badge">Pure Peace 🤍</span>
+              </div>
+              <span class="milestone-badge">Little Things</span>
+              <h3 class="milestone-title">The Moments That Made Us Smile</h3>
+              <p class="milestone-desc">
+                Those quiet, sweet hugs where no words were needed. Just holding you close and realizing that home is not a place—it is wherever you are, Ranu.
+              </p>
+              <div class="milestone-footer">
+                <span>🤍 You are my peace and my home</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Moment 6: Today – Ranu's Special Birthday -->
+          <div class="timeline-item" data-milestone="6">
+            <div class="timeline-node"><span class="node-icon">🎂</span></div>
+            <div class="timeline-card highlight-card">
+              <div class="timeline-img-holder">
+                <img src="images/photo2.jpg" alt="Today - Ranu's Birthday" loading="lazy">
+                <span class="timeline-img-badge gold">Queen's Day 👑</span>
+              </div>
+              <span class="milestone-badge gold">Today • 26 NOV</span>
+              <h3 class="milestone-title">Today – Ranu's Special Birthday</h3>
+              <p class="milestone-desc">
+                Today is entirely about you, my love. Celebrating the most radiant, wonderful person in my world. May every dream in your eyes come true!
+              </p>
+              <div class="milestone-footer">
+                <span>💕 Happy Birthday, Meri Jaan Ranu!</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ==============================================
+         FEATURE 2: DISTANCE DOESN'T MATTER 🌍
+         ============================================== -->
+    <section class="distance-section" id="distanceSection">
+      <div class="section-header">
+        <span class="section-tag">🌍 LOVE ACROSS THE MILES 🌍</span>
+        <h2 class="section-title">Distance Doesn't Matter</h2>
+        <p class="section-subtitle">"Different Places, One Heart."</p>
+      </div>
+
+      <div class="distance-card">
+        <div class="map-visual-container">
+          <!-- Location 1: Swayam -->
+          <div class="loc-node loc-swayam">
+            <div class="loc-ping"></div>
+            <div class="loc-avatar">
+              <img src="images/photo1.jpg" alt="Swayam">
+            </div>
+            <div class="loc-label">
+              <strong>Swayam</strong>
+              <span>My Location 📍</span>
+            </div>
+          </div>
+
+          <!-- Animated Connection Path -->
+          <div class="flight-route-wrap">
+            <svg class="flight-svg" viewBox="0 0 600 160" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="routeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#e07a98" />
+                  <stop offset="50%" stop-color="#ffd700" />
+                  <stop offset="100%" stop-color="#c084fc" />
+                </linearGradient>
+              </defs>
+              <path class="route-bg" d="M 60,110 Q 300,10 540,110" />
+              <path class="route-animated" d="M 60,110 Q 300,10 540,110" />
+            </svg>
+            <div class="flying-heart-traveler" id="flyingHeart">💖</div>
+          </div>
+
+          <!-- Location 2: Ranu -->
+          <div class="loc-node loc-ranu">
+            <div class="loc-ping pink"></div>
+            <div class="loc-avatar">
+              <img src="images/photo2.jpg" alt="Ranu">
+            </div>
+            <div class="loc-label">
+              <strong>Ranu</strong>
+              <span>My Heart's Home 👑</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="distance-quote-box">
+          <p class="distance-main-text">
+            "They say distance tests love, but with you, every kilometer only proves that my heart beats only for you. No map can measure how close you are to my soul."
+          </p>
+          <div class="distance-badges">
+            <div class="d-badge">
+              <small>Physical Distance</small>
+              <strong>Just A Number</strong>
+            </div>
+            <div class="d-badge heart-badge">
+              <small>Heartbeat Distance</small>
+              <strong>0.00 mm ❤️</strong>
+            </div>
+            <div class="d-badge">
+              <small>Destination</small>
+              <strong>Forever Together</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ==============================================
+         FEATURE 4: OUR UNIVERSE 🌌
+         ============================================== -->
+    <section class="universe-section" id="universeSection">
+      <div class="section-header">
+        <span class="section-tag">🌌 OUR CELESTIAL LOVE 🌌</span>
+        <h2 class="section-title">Our Universe</h2>
+        <p class="section-subtitle">"In My Universe, You Are My Favourite Star."</p>
+      </div>
+
+      <div class="galaxy-stage" id="galaxyStage">
+        <div class="constellation-twinkle-layer"></div>
+        <p class="galaxy-instruction">Tap any glowing star to reveal a sacred memory constellation ✨</p>
+
+        <!-- Interactive Constellation Stars (6 Stars) -->
+        <div class="stars-constellation" id="starsConstellation">
+          <!-- Star 1 -->
+          <div class="star-point" data-star="1" style="top: 25%; left: 18%;">
+            <div class="star-halo"></div>
+            <span class="star-glyph">⭐</span>
+            <span class="star-tag">The First Spark</span>
+          </div>
+          <!-- Star 2 -->
+          <div class="star-point" data-star="2" style="top: 15%; left: 50%;">
+            <div class="star-halo gold"></div>
+            <span class="star-glyph">🌟</span>
+            <span class="star-tag">Late Night Talks</span>
+          </div>
+          <!-- Star 3 -->
+          <div class="star-point" data-star="3" style="top: 30%; left: 82%;">
+            <div class="star-halo"></div>
+            <span class="star-glyph">⭐</span>
+            <span class="star-tag">Her Radiant Smile</span>
+          </div>
+          <!-- Star 4 -->
+          <div class="star-point" data-star="4" style="top: 70%; left: 28%;">
+            <div class="star-halo gold"></div>
+            <span class="star-glyph">🌟</span>
+            <span class="star-tag">Matching Hearts</span>
+          </div>
+          <!-- Star 5 -->
+          <div class="star-point" data-star="5" style="top: 75%; left: 72%;">
+            <div class="star-halo"></div>
+            <span class="star-glyph">⭐</span>
+            <span class="star-tag">Warm Embraces</span>
+          </div>
+          <!-- Star 6 (Central Queen Star) -->
+          <div class="star-point queen-star" data-star="6" style="top: 50%; left: 50%;">
+            <div class="star-halo queen"></div>
+            <span class="star-glyph">💫</span>
+            <span class="star-tag">Queen Ranu • 26 NOV</span>
+          </div>
+        </div>
+
+        <!-- Star Memory Reveal Modal -->
+        <div class="star-memory-modal" id="starMemoryModal">
+          <div class="star-memory-card">
+            <button class="star-close-btn" id="starCloseBtn">&times;</button>
+            <div class="star-mem-icon" id="starMemIcon">🌟</div>
+            <h4 class="star-mem-title" id="starMemTitle">Memory Title</h4>
+            <div class="star-mem-img-wrap">
+              <img id="starMemImg" src="images/photo1.jpg" alt="Memory Star">
+            </div>
+            <p class="star-mem-text" id="starMemText">Memory text description...</p>
+            <span class="star-mem-date" id="starMemDate">Constellation Date</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ==============================================
+         FEATURE 3: OPEN WHEN LETTERS 💌
+         ============================================== -->
+    <section class="open-when-section" id="openWhenSection">
+      <div class="section-header">
+        <span class="section-tag">💌 FOR EVERY MOOD &amp; MOMENT 💌</span>
+        <h2 class="section-title">Open When Letters</h2>
+        <p class="section-subtitle">Five special letters from Swayam, waiting for the moments you need them most</p>
+      </div>
+
+      <div class="open-when-grid">
+        <!-- Letter 1: When you miss me -->
+        <div class="open-when-card" data-letter="1">
+          <div class="envelope-art">
+            <div class="env-body">
+              <span class="env-stamp">🌙</span>
+              <span class="env-seal">S &hearts; R</span>
+            </div>
+          </div>
+          <h3 class="open-when-title">Open When You Miss Me</h3>
+          <span class="open-when-btn">Open Letter 💌</span>
+        </div>
+
+        <!-- Letter 2: When you feel sad -->
+        <div class="open-when-card" data-letter="2">
+          <div class="envelope-art">
+            <div class="env-body">
+              <span class="env-stamp">🌧️</span>
+              <span class="env-seal">S &hearts; R</span>
+            </div>
+          </div>
+          <h3 class="open-when-title">Open When You Feel Sad</h3>
+          <span class="open-when-btn">Open Letter 💌</span>
+        </div>
+
+        <!-- Letter 3: When you are happy -->
+        <div class="open-when-card" data-letter="3">
+          <div class="envelope-art">
+            <div class="env-body">
+              <span class="env-stamp">☀️</span>
+              <span class="env-seal">S &hearts; R</span>
+            </div>
+          </div>
+          <h3 class="open-when-title">Open When You Are Happy</h3>
+          <span class="open-when-btn">Open Letter 💌</span>
+        </div>
+
+        <!-- Letter 4: When you need motivation -->
+        <div class="open-when-card" data-letter="4">
+          <div class="envelope-art">
+            <div class="env-body">
+              <span class="env-stamp">💪</span>
+              <span class="env-seal">S &hearts; R</span>
+            </div>
+          </div>
+          <h3 class="open-when-title">Open When You Need Motivation</h3>
+          <span class="open-when-btn">Open Letter 💌</span>
+        </div>
+
+        <!-- Letter 5: When you want to smile -->
+        <div class="open-when-card" data-letter="5">
+          <div class="envelope-art">
+            <div class="env-body">
+              <span class="env-stamp">😊</span>
+              <span class="env-seal">S &hearts; R</span>
+            </div>
+          </div>
+          <h3 class="open-when-title">Open When You Want to Smile</h3>
+          <span class="open-when-btn">Open Letter 💌</span>
+        </div>
+      </div>
+
+      <!-- Letter Display Modal -->
+      <div class="open-when-modal" id="openWhenModal">
+        <div class="open-when-modal-backdrop" id="openWhenBackdrop"></div>
+        <div class="open-when-parchment" id="openWhenParchment">
+          <button class="parchment-close" id="openWhenClose">&times;</button>
+          <div class="parchment-wax-seal">S ❤️ R</div>
+          <h3 class="parchment-title" id="parchmentTitle">Dearest Ranu</h3>
+          <div class="parchment-body" id="parchmentBody">
+            <!-- Populated dynamically via JS -->
+          </div>
+          <div class="parchment-sign">
+            <span>Always &amp; Forever,</span>
+            <strong>Swayam 💕</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ==============================================
+         5. LOVE LETTER SECTION
+         ============================================== -->
+    <section class="letter-section" id="letterSection">
+      <div class="section-header">
+        <span class="section-tag">💌 STRAIGHT FROM MY HEART 💌</span>
+        <h2 class="section-title">A Love Letter to My Wife</h2>
+        <p class="section-subtitle">Words can never be enough, but here is a piece of my heart</p>
+      </div>
+
+      <div class="envelope-wrapper" id="envelopeWrapper">
+        
+        <!-- Folded Envelope Visual -->
+        <div class="envelope" id="envelope">
+          <div class="envelope-back"></div>
+          
+          <!-- Letter Card that slides out -->
+          <div class="letter-card" id="letterCard">
+            <div class="letter-texture"></div>
+            
+            <div class="letter-content">
+              <div class="letter-stamp">
+                <span>S &hearts; R</span>
+                <small>26 NOV</small>
+              </div>
+
+              <h3 class="letter-greeting">Dearest Ranu,</h3>
+              
+              <div class="letter-body" id="letterBody">
+                <p><strong>Happy Birthday, my love! ❤️</strong></p>
+                <p>
+                  Today isn’t just another day on the calendar; it is the day the most beautiful, kind, and radiant soul came into this world—the woman who would one day walk into my life and transform it into pure magic.
+                </p>
+                <p>
+                  These past 3 months as your husband have felt like living inside a dream I never want to wake up from. In just 90 days, you have become my morning peace, my late-night comfort, and my favourite reason to smile. People say the honeymoon phase fades, but with you, every single day makes me fall even deeper in love with your pure heart.
+                </p>
+                <p>
+                  Thank you for being my wife, my best friend, and my biggest blessing. Seeing you smile is my life's highest purpose. Whatever dreams you hold in your heart, I promise to stand beside you, hold your hand through every high and low, and celebrate every victory with you.
+                </p>
+                <p class="hinglish-quote">
+                  <em>"Tum meri zindagi ka sabse khubsurat tohfa ho, Ranu. Tumhare bina main adhoora hoon."</em>
+                </p>
+                <p>
+                  May this year shower you with endless laughter, glowing health, and all the happiness you so effortlessly bring into my life.
+                </p>
+              </div>
+
+              <div class="letter-sign">
+                <span class="sign-tag">Forever &amp; Always Yours,</span>
+                <span class="sign-name">Swayam 💕</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Front Envelope Flaps -->
+          <div class="envelope-flaps">
+            <div class="flap left"></div>
+            <div class="flap right"></div>
+            <div class="flap bottom"></div>
+            <div class="flap top" id="envelopeTop">
+              <!-- Golden Wax Seal Button -->
+              <div class="wax-seal" id="waxSeal" role="button" tabindex="0" title="Tap to open letter">
+                <span class="seal-initials">S ❤️ R</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="envelope-hint" id="envelopeHint">
+          <span class="hint-pulse"></span>
+          <span>Tap the golden wax seal to read Swayam's letter 💌</span>
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- ==============================================
+         FEATURE 6: A MOVIE ABOUT RANU 🎬
+         ============================================== -->
+    <section class="movie-section" id="movieSection">
+      <div class="section-header">
+        <span class="section-tag">🎬 CINEMATIC PREMIERE 🎬</span>
+        <h2 class="section-title">A Movie About Ranu</h2>
+        <p class="section-subtitle">Grab your popcorn, turn up the volume, and watch our story unfold</p>
+      </div>
+
+      <div class="movie-theater" id="movieTheater">
+        <!-- Cinema Screen Frame -->
+        <div class="movie-screen-frame">
+          <div class="screen-glare"></div>
+
+          <!-- Intro Slate -->
+          <div class="movie-slide intro-slide active" id="movieIntroSlide">
+            <div class="slate-crown">👑</div>
+            <span class="slate-studio">A SWAYAM GULHANE PRODUCTION</span>
+            <h3 class="slate-title">The Story of Ranu ❤️</h3>
+            <p class="slate-tagline">"The Most Beautiful Chapter of My Life"</p>
+            <button class="start-movie-btn pulse-glow" id="startMovieBtn">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+              <span>Play Movie 🎬</span>
+            </button>
+          </div>
+
+          <!-- Photo Slide Container -->
+          <div class="movie-slide photo-slide" id="moviePhotoSlide" style="display: none;">
+            <img src="images/photo1.jpg" alt="Cinema Photo" id="movieImg">
+            <div class="movie-caption-overlay">
+              <span class="movie-chapter-tag" id="movieChapterTag">Scene 1</span>
+              <h4 class="movie-scene-title" id="movieSceneTitle">Scene Title</h4>
+              <p class="movie-scene-desc" id="movieSceneDesc">Scene Description...</p>
+            </div>
+          </div>
+
+          <!-- Outro Ending Slate -->
+          <div class="movie-slide outro-slide" id="movieOutroSlide" style="display: none;">
+            <div class="outro-heart">💖</div>
+            <h3 class="outro-title">"The Most Beautiful Chapter of My Life"</h3>
+            <p class="outro-text">And our forever fairytale is only just beginning, Ranu.</p>
+            <button class="replay-movie-btn" id="replayMovieBtn">Replay Movie ↺</button>
+          </div>
+        </div>
+
+        <!-- Cinema Controls Bar -->
+        <div class="movie-controls-bar">
+          <button class="m-ctrl-btn" id="moviePlayPauseBtn" aria-label="Play/Pause">⏸️</button>
+          <div class="movie-progress-track">
+            <div class="movie-progress-fill" id="movieProgressFill"></div>
+          </div>
+          <span class="movie-counter" id="movieCounter">1 / 10</span>
+          <button class="m-ctrl-btn" id="movieFullscreenBtn" title="Fullscreen">⛶</button>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ==============================================
+         FEATURE 7: HOW WELL DO YOU KNOW ME? 🧩
+         ============================================== -->
+    <section class="quiz-section" id="quizSection">
+      <div class="section-header">
+        <span class="section-tag">🧩 LOVE TRIVIA 🧩</span>
+        <h2 class="section-title">How Well Do You Know Me?</h2>
+        <p class="section-subtitle">Answer these 10 fun questions to test your Swayam &amp; Ranu knowledge!</p>
+      </div>
+
+      <div class="quiz-box-card" id="quizBoxCard">
+        <!-- Progress Bar -->
+        <div class="quiz-top-bar">
+          <span class="quiz-q-indicator" id="quizQIndicator">Question 1 of 10</span>
+          <div class="quiz-score-badge">Score: <strong id="quizCurrentScore">0</strong> / 10</div>
+        </div>
+        <div class="quiz-progress-track">
+          <div class="quiz-progress-bar" id="quizProgressBar" style="width: 10%;"></div>
+        </div>
+
+        <!-- Question Body -->
+        <div class="quiz-body" id="quizBody">
+          <h3 class="quiz-question-text" id="quizQuestionText">Loading question...</h3>
+          <div class="quiz-options-grid" id="quizOptionsGrid">
+            <!-- 4 Options rendered by JS -->
+          </div>
+          <div class="quiz-feedback-box" id="quizFeedbackBox" style="display: none;">
+            <span class="feedback-icon" id="feedbackIcon">🎉</span>
+            <p class="feedback-text" id="feedbackText">Correct answer!</p>
+          </div>
+        </div>
+
+        <!-- Next Question Button -->
+        <div class="quiz-bottom-actions">
+          <button class="quiz-next-btn" id="quizNextBtn" style="display: none;">Next Question ➔</button>
+        </div>
+
+        <!-- Quiz Completion View -->
+        <div class="quiz-completed-view" id="quizCompletedView" style="display: none;">
+          <div class="completed-crown">🏆</div>
+          <h3 class="completed-title">Quiz Completed, Ranu! ❤️</h3>
+          <div class="final-score-circle">
+            <span id="finalScoreText">10</span>/10
+          </div>
+          <p class="quiz-reaction-text" id="quizReactionText">You know me better than I know myself!</p>
+          <div class="quiz-birthday-surprise-note">
+            <p>"No matter your score, in the quiz of life, choosing you was the only 100% right answer I ever made. Happy Birthday, Ranu! 💕"</p>
+          </div>
+          <button class="quiz-retry-btn" id="quizRetryBtn">Play Again ↺</button>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ==============================================
+         6. BIRTHDAY CAKE MOMENT
+         ============================================== -->
+    <section class="cake-section" id="cakeSection">
+      <div class="section-header">
+        <span class="section-tag">🎂 TIME FOR A WISH 🎂</span>
+        <h2 class="section-title">Blow Out the Candles, Ranu!</h2>
+        <p class="section-subtitle">Close your eyes, make the sweetest wish, and tap the candles to blow them out</p>
+      </div>
+
+      <div class="cake-stage">
+        
+        <!-- Interactive 3-Tier Birthday Cake -->
+        <div class="cake-wrapper" id="cakeWrapper">
+          
+          <!-- Candles Layer -->
+          <div class="candles-row" id="candlesRow">
+            
+            <div class="candle" data-candle="1">
+              <div class="flame" id="flame1">
+                <span class="flame-inner"></span>
+                <span class="flame-glow"></span>
+              </div>
+              <div class="wick"></div>
+              <div class="candle-stick stripe-gold"></div>
+              <div class="smoke" id="smoke1"></div>
+            </div>
+
+            <div class="candle center" data-candle="2">
+              <div class="flame" id="flame2">
+                <span class="flame-inner"></span>
+                <span class="flame-glow"></span>
+              </div>
+              <div class="wick"></div>
+              <div class="candle-stick stripe-pink"></div>
+              <div class="smoke" id="smoke2"></div>
+            </div>
+
+            <div class="candle" data-candle="3">
+              <div class="flame" id="flame3">
+                <span class="flame-inner"></span>
+                <span class="flame-glow"></span>
+              </div>
+              <div class="wick"></div>
+              <div class="candle-stick stripe-gold"></div>
+              <div class="smoke" id="smoke3"></div>
+            </div>
+
+          </div>
+
+          <!-- Cake Tiers -->
+          <div class="cake-tier tier-top">
+            <div class="cream-drips">
+              <span></span><span></span><span></span><span></span><span></span>
+            </div>
+            <div class="strawberries">
+              <span>🍓</span><span>🍓</span><span>🍓</span>
+            </div>
+          </div>
+          
+          <div class="cake-tier tier-middle">
+            <div class="gold-band"></div>
+            <div class="cream-pearls"></div>
+          </div>
+          
+          <div class="cake-tier tier-bottom">
+            <div class="cake-stand-shadow"></div>
+            <div class="icing-decor">
+              <span>🌸</span><span>💖</span><span>🌸</span><span>💖</span><span>🌸</span>
+            </div>
+          </div>
+
+          <!-- Golden Cake Stand -->
+          <div class="cake-stand"></div>
+          <div class="cake-stand-base"></div>
+
+        </div>
+
+        <!-- Interactive Blow Actions -->
+        <div class="blow-action-box" id="blowActionBox">
+          <button class="blow-btn pulse-glow" id="blowCandlesBtn">
+            <span class="btn-icon">🎂</span>
+            <span>Tap to Blow Candles!</span>
+          </button>
+          
+          <div class="mic-option" id="micOption">
+            <button class="mic-toggle-btn" id="micToggleBtn">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5-3c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+              </svg>
+              <span>Or blow into your phone's mic 💨</span>
+            </button>
+            <span class="mic-status" id="micStatus"></span>
+          </div>
+        </div>
+
+        <!-- Wish Banner (Reveals after blowout) -->
+        <div class="wish-reveal-banner" id="wishRevealBanner" style="display: none;">
+          <div class="wish-card">
+            <span class="sparkle-top">✨ ✨ ✨</span>
+            <h3 class="wish-headline">Make a wish, meri jaan ✨</h3>
+            <p class="wish-text">
+              May every single dream in your beautiful eyes come true. Swayam will always be here to hold your hand and cheer for you!
+            </p>
+            <div class="wish-cake-tag">Happy 26th November, Ranu ❤️</div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- ==============================================
+         SECTION 3: MYSTERY GIFT – UNLOCK YOUR SURPRISE 🎁
+         ============================================== -->
+    <section class="mystery-gift-section" id="mysteryGiftSection">
+      <div class="section-header">
+        <span class="section-tag">🎁 A SPECIAL SURPRISE FROM SWAYAM 🎁</span>
+        <h2 class="section-title">Mystery Gift – Unlock Your Surprise</h2>
+        <p class="section-subtitle">A little piece of my heart wrapped just for you across the distance</p>
+      </div>
+
+      <div class="mystery-stage">
+        
+        <!-- Initial 3D Animated Gift Box -->
+        <div class="mystery-box-container" id="mysteryBoxContainer">
+          <div class="mystery-glow-aura"></div>
+          <div class="mystery-sparkles-orbit"></div>
+          
+          <div class="mystery-box" id="mysteryBox" role="button" tabindex="0" aria-label="Unlock your surprise">
+            <!-- 3D Lid -->
+            <div class="mystery-lid" id="mysteryLid">
+              <div class="mystery-bow">
+                <span class="bow-petal left"></span>
+                <span class="bow-petal right"></span>
+                <span class="bow-knot"></span>
+              </div>
+              <div class="mystery-ribbon-v"></div>
+              <div class="mystery-ribbon-h"></div>
+            </div>
+            <!-- Box Body -->
+            <div class="mystery-body">
+              <div class="mystery-ribbon-v"></div>
+              <div class="mystery-ribbon-h"></div>
+              <div class="mystery-tag">For Ranu ❤️</div>
+              <div class="mystery-inner-light" id="mysteryInnerLight"></div>
+            </div>
+          </div>
+
+          <!-- Prompt Text & Unlock Button -->
+          <h3 class="mystery-prompt-text">Ranu, Something Special Is Waiting For You! ❤️</h3>
+          <p class="mystery-prompt-sub">Tap the button below to unlock your special birthday delivery</p>
+
+          <button class="mystery-unlock-btn pulse-glow" id="mysteryUnlockBtn">
+            <span class="btn-icon">🎁</span>
+            <span>Unlock Your Surprise 🎁</span>
+          </button>
+        </div>
+
+        <!-- Revealed Surprise Content (Reveals after box opens) -->
+        <div class="mystery-reveal-content" id="mysteryRevealContent" style="display: none;">
+          
+          <div class="mystery-message-card">
+            <div class="card-glass-glow"></div>
+            <span class="message-badge">💌 Across The Distance, Straight To Your Heart</span>
+            
+            <p class="main-surprise-quote" id="mainSurpriseQuote">
+              "Ranu, I wish I could be there beside you today to celebrate your special day. Since distance keeps us apart, I created this little surprise to make you smile. You deserve all the happiness in the world. Happy Birthday! ❤️"
+            </p>
+
+            <!-- Memory Photo Frame -->
+            <div class="mystery-photo-frame">
+              <div class="frame-tag">Our Warmest Embrace 💖</div>
+              <img src="images/photo8.jpg" onerror="this.src='images/photo1.jpg';" alt="Swayam &amp; Ranu Hugging" id="mysteryPhoto">
+              <div class="photo-caption-pill">Forever Connected by Heart • Swayam &amp; Ranu</div>
+            </div>
+
+            <!-- One More Surprise Button -->
+            <div class="one-more-surprise-box">
+              <button class="one-more-btn pulse-glow" id="oneMoreSurpriseBtn">
+                <span>One More Surprise ❤️</span>
+              </button>
+            </div>
+
+            <!-- Hidden Second Romantic Message (Revealed on click) -->
+            <div class="hidden-secret-letter" id="hiddenSecretLetter" style="display: none;">
+              <div class="secret-wax-badge">S ❤️ R</div>
+              <h4 class="secret-title">One Little Secret, My Love... ✨</h4>
+              <p class="secret-text">
+                Meri Pyaari Ranu,<br><br>
+                Miles may separate where we sleep tonight, but no distance on earth is strong enough to weaken the love I carry for you. Every single beat of my heart whispers your name.<br><br>
+                I promise to hold you tight very soon, look into your beautiful eyes, and celebrate every lost second together. Until then, look up at the moon tonight—because no matter where we are, we are looking at the exact same sky.<br><br>
+                <em>Tum meri jaan ho, Ranu. Happy Birthday! Forever &amp; always yours, Swayam 💕</em>
+              </p>
+              <div class="floating-hearts-cluster">
+                <span>💖</span><span>✨</span><span>💕</span><span>🌹</span><span>💖</span>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- ==============================================
+         FEATURE 8: VIRTUAL FLOWER GARDEN 🌹
+         ============================================== -->
+    <section class="garden-section" id="gardenSection">
+      <div class="section-header">
+        <span class="section-tag">🌹 FLOWERS FOR MY QUEEN 🌹</span>
+        <h2 class="section-title">Virtual Flower Garden</h2>
+        <p class="section-subtitle">Tap each flower to watch it bloom and reveal a sweet personal message for Ranu</p>
+      </div>
+
+      <div class="garden-stage">
+        <!-- Floating Butterflies Container -->
+        <div class="butterflies-wrap" id="butterfliesWrap">
+          <div class="butterfly b1">🦋</div>
+          <div class="butterfly b2">🦋</div>
+          <div class="butterfly b3">🦋</div>
+        </div>
+
+        <!-- Flowers Bed (6 Interactive Blooming Flowers) -->
+        <div class="flowers-grid" id="flowersGrid">
+          <div class="flower-item" data-flower="1">
+            <div class="flower-bloom-art rose">🌹</div>
+            <span class="flower-name">Red Rose</span>
+            <span class="flower-bloom-state">Tap to Bloom 🌸</span>
+          </div>
+          <div class="flower-item" data-flower="2">
+            <div class="flower-bloom-art lavender">🪻</div>
+            <span class="flower-name">Lavender</span>
+            <span class="flower-bloom-state">Tap to Bloom 🌸</span>
+          </div>
+          <div class="flower-item" data-flower="3">
+            <div class="flower-bloom-art sunflower">🌻</div>
+            <span class="flower-name">Sunflower</span>
+            <span class="flower-bloom-state">Tap to Bloom 🌸</span>
+          </div>
+          <div class="flower-item" data-flower="4">
+            <div class="flower-bloom-art tulip">🌷</div>
+            <span class="flower-name">Pink Tulip</span>
+            <span class="flower-bloom-state">Tap to Bloom 🌸</span>
+          </div>
+          <div class="flower-item" data-flower="5">
+            <div class="flower-bloom-art cherry">🌸</div>
+            <span class="flower-name">Cherry Blossom</span>
+            <span class="flower-bloom-state">Tap to Bloom 🌸</span>
+          </div>
+          <div class="flower-item" data-flower="6">
+            <div class="flower-bloom-art lotus">🪷</div>
+            <span class="flower-name">Royal Lotus</span>
+            <span class="flower-bloom-state">Tap to Bloom 🌸</span>
+          </div>
+        </div>
+
+        <!-- Flower Message Popover Pill -->
+        <div class="flower-message-pill" id="flowerMessagePill" style="display: none;">
+          <span class="flower-icon-pop" id="flowerIconPop">🌹</span>
+          <p id="flowerMessageText">Tap a flower to bloom it!</p>
+        </div>
+
+        <!-- Bouquet Action Box -->
+        <div class="bouquet-reveal-box" id="bouquetRevealBox">
+          <button class="bouquet-btn pulse-glow" id="bouquetBtn">
+            <span>Collect Your Birthday Bouquet 💐</span>
+          </button>
+          <div class="bouquet-card" id="bouquetCard" style="display: none;">
+            <div class="big-bouquet-icon">💐</div>
+            <h3 class="bouquet-title">For My Eternal Rose, Ranu 🌹</h3>
+            <p class="bouquet-text">
+              "Real flowers fade, but the flowers of adoration, respect, and deep love I hold for you will stay in full bloom across every lifetime. Happy Birthday to the most fragrant blessing of my life."
+            </p>
+            <div class="bouquet-signature">With all my love, Swayam ❤️</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ==============================================
+         FEATURE 9: SECRET LOVE VAULT 🔐
+         ============================================== -->
+    <section class="vault-section" id="vaultSection">
+      <div class="section-header">
+        <span class="section-tag">🔐 TOP SECRET SURPRISE 🔐</span>
+        <h2 class="section-title">Secret Love Vault</h2>
+        <p class="section-subtitle">Only Ranu holds the key to unlock Swayam's private heart chamber</p>
+      </div>
+
+      <div class="vault-card" id="vaultCard">
+        <!-- Vault Locked State -->
+        <div class="vault-locked-state" id="vaultLockedState">
+          <div class="vault-dial-wrap">
+            <div class="vault-dial" id="vaultDial">
+              <span class="dial-notch"></span>
+              <div class="dial-center">🔒</div>
+            </div>
+          </div>
+
+          <h3 class="vault-prompt">Enter the Secret Passcode</h3>
+          <p class="vault-hint-text">Hint: Your sweet nickname, or our special day! (Try <code>ranu</code>, <code>2611</code>, or <code>love</code>)</p>
+
+          <form class="vault-input-form" id="vaultForm" onsubmit="return false;">
+            <div class="vault-input-group">
+              <input type="password" id="vaultPassInput" class="vault-input" placeholder="Type passcode..." autocomplete="off">
+              <button type="submit" class="vault-submit-btn" id="vaultUnlockBtn">Unlock 🔑</button>
+            </div>
+            <div class="vault-error-msg" id="vaultErrorMsg"></div>
+          </form>
+        </div>
+
+        <!-- Vault Unlocked State -->
+        <div class="vault-unlocked-state" id="vaultUnlockedState" style="display: none;">
+          <div class="unlocked-badge">ACCESS GRANTED: UNCONDITIONAL LOVE 💖</div>
+          <h3 class="vault-success-title">Welcome to Swayam's Secret Vault ✨</h3>
+          <p class="vault-secret-note">
+            "You unlocked my deepest secret: From the first day until my very last breath, my heart will belong to no one else but you, Ranu. You are my greatest pride."
+          </p>
+
+          <!-- Secret Photo Collage -->
+          <div class="vault-photos-grid">
+            <div class="vault-photo-item">
+              <img src="images/photo8.jpg" alt="Secret Hug">
+              <span>My Warmest Hug</span>
+            </div>
+            <div class="vault-photo-item">
+              <img src="images/photo10.jpg" alt="Holding Hands">
+              <span>My Whole Life</span>
+            </div>
+            <div class="vault-photo-item">
+              <img src="images/photo7.jpg" alt="Festive Joy">
+              <span>Destiny's Choice</span>
+            </div>
+          </div>
+
+          <button class="vault-lock-again-btn" id="vaultLockAgainBtn">Lock Vault 🔒</button>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ==============================================
+         FEATURE 10: FINAL BIRTHDAY FIREWORKS 🎇
+         ============================================== -->
+    <section class="fireworks-section" id="fireworksSection">
+      <div class="section-header">
+        <span class="section-tag">🎇 GRAND FINALE CELEBRATION 🎇</span>
+        <h2 class="section-title">Happy Birthday Ranu ❤️</h2>
+        <p class="section-subtitle">Let the skies light up in honor of your special day</p>
+      </div>
+
+      <div class="fireworks-stage" id="fireworksStage">
+        <canvas id="fireworksCanvas"></canvas>
+        <div class="fireworks-content">
+          <div class="grand-crown-glow">👑</div>
+          <h1 class="grand-ranu-name">HAPPY BIRTHDAY RANU ❤️</h1>
+          <p class="grand-finale-message">
+            "Today, tomorrow, and across all galaxies and timelines, I choose you. May your birthday be as unforgettable, magical, and dazzling as you are to me."
+          </p>
+          <div class="fireworks-trigger-box">
+            <button class="launch-fireworks-btn pulse-glow" id="launchFireworksBtn">
+              <span>Launch Birthday Fireworks 🎆</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ==============================================
+         7. FINAL SURPRISE & 3D PARTICLE HEART
+         ============================================== -->
+    <section class="final-section" id="finalSection">
+      <div class="final-container">
+        
+        <span class="final-tag">💖 TO INFINITY &amp; BEYOND 💖</span>
+        
+        <h2 class="final-title">
+          I Love You Ranu
+          <span class="sub-text">Forever and Always 💕</span>
+        </h2>
+
+        <!-- Interactive 3D Heart Container -->
+        <div class="heart-3d-stage" id="heart3dStage">
+          <canvas id="heartCanvas"></canvas>
+          <div class="heart-pulse-aura"></div>
+          <div class="heart-interaction-hint">
+            <span>Drag or touch to rotate our beating heart ✨</span>
+          </div>
+        </div>
+
+        <!-- Love Certificate Card -->
+        <div class="love-certificate">
+          <div class="cert-border">
+            <div class="cert-header">
+              <span class="cert-crown">👑</span>
+              <h3>OUR LOVE CONTRACT</h3>
+            </div>
+            <p class="cert-body">
+              This certifies that <strong>Swayam</strong> is completely, irrevocably, and endlessly in love with <strong>Ranu</strong>. Valid for today, tomorrow, and every second of our lives together.
+            </p>
+            <div class="cert-meta">
+              <div class="meta-item">
+                <small>Duration</small>
+                <strong>3 Months &amp; Forever</strong>
+              </div>
+              <div class="meta-item">
+                <small>Date</small>
+                <strong>26th November</strong>
+              </div>
+              <div class="meta-item">
+                <small>Signed With</small>
+                <strong>True Love ❤️</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom Action Buttons -->
+        <div class="final-actions">
+          <button class="replay-btn" id="replayBtn">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M1 4v6h6M23 20v-6h-6"/>
+              <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/>
+            </svg>
+            <span>Replay Our Story ❤️</span>
+          </button>
+
+          <a href="https://api.whatsapp.com/send?text=Swayam,%20I%20loved%20my%20birthday%20surprise%20so%20much!%20%E2%9D%A4%EF%B8%8F%20You%20are%20the%20best%20husband%20ever!" 
+             target="_blank" 
+             rel="noopener noreferrer" 
+             class="whatsapp-love-btn" 
+             id="whatsappBtn">
+            <span>Send Love to Swayam 💌</span>
+          </a>
+        </div>
+
+        <footer class="romantic-footer">
+          <p>Crafted with endless love by Swayam for Ranu • Happy Birthday Meri Jaan ❤️</p>
+        </footer>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- JavaScript Main Application -->
+  <script src="script.js"></script>
+</body>
+</html>
