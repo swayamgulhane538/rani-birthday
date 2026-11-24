@@ -1902,9 +1902,9 @@
       },
       {
         q: "What is the theme love song playing on this website?",
-        options: ["Ishq Wala Love 🎵", "Tum Se Hi", "Kesariya", "Raataan Lambiyan"],
+        options: ["Ranu's Special Birthday Song 🎵", "Tum Se Hi", "Kesariya", "Raataan Lambiyan"],
         correct: 0,
-        comment: "Yes! 'Surkh wala, soz wala, faiz wala love... Ishq wala love!' 🎶"
+        comment: "Yes! 'Ranu tula aaj manaapasun Happy Birthday saajra... Majhya laadkya baykola vadhadivsachya shubhechha!' 🎶❤️"
       },
       {
         q: "What is the most special date of November?",
