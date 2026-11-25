@@ -297,11 +297,12 @@
     }
 
     // Reset Swayam & Ranu position to entrance
-    if (swayamMesh) swayamMesh.position.set(0, 0, 4);
-    if (ranuMesh) ranuMesh.position.set(1.4, 0, 2.4);
+    if (swayamMesh) swayamMesh.position.set(0, 0, 9);
+    if (ranuMesh) ranuMesh.position.set(1.4, 0, 7.4);
 
     cameraTheta = Math.PI;
-    cameraPhi = 0.42;
+    cameraPhi = 0.38;
+    cameraDistance = 5.6;
 
     // Show desktop controls toast for 6s
     const toast = document.getElementById('museumControlsToast');
@@ -495,11 +496,11 @@
 
     // --- 3D Avatars: Swayam & Ranu ---
     swayamMesh = createSwayamAvatar();
-    swayamMesh.position.set(0, 0, 4);
+    swayamMesh.position.set(0, 0, 9);
     scene.add(swayamMesh);
 
     ranuMesh = createRanuAvatar();
-    ranuMesh.position.set(1.4, 0, 2.4);
+    ranuMesh.position.set(1.4, 0, 7.4);
     scene.add(ranuMesh);
 
     window.addEventListener('resize', onWindowResize);
@@ -657,12 +658,12 @@
       chGroup.add(ring1);
 
       // Crystals
-      const crystalMat = new THREE.MeshPhysicalMaterial({
+      const crystalMat = new THREE.MeshStandardMaterial({
         color: 0xffffff,
-        transmission: 0.8,
-        opacity: 0.85,
+        roughness: 0.15,
+        metalness: 0.7,
         transparent: true,
-        roughness: 0.1
+        opacity: 0.85
       });
 
       const crystalCount = isFinal ? 16 : 10;
@@ -731,7 +732,9 @@
 
       // Inner Photo Canvas
       const photoTex = textureLoader.load(mem.img);
-      photoTex.colorSpace = THREE.SRGBColorSpace;
+      if (THREE.SRGBColorSpace) photoTex.colorSpace = THREE.SRGBColorSpace;
+      else if (THREE.sRGBEncoding) photoTex.encoding = THREE.sRGBEncoding;
+
       const photoMat = new THREE.MeshBasicMaterial({ map: photoTex });
       const photoCanvas = new THREE.Mesh(new THREE.PlaneGeometry(2.8, 3.6), photoMat);
       photoCanvas.position.z = 0.07;
@@ -746,9 +749,11 @@
       // Dedicated Gallery Spotlight
       const spot = new THREE.SpotLight(0xfff2d6, 1.2, 8, 0.55, 0.7);
       spot.position.set(mem.position.x > 0 ? mem.position.x - 2.5 : mem.position.x + 2.5, 6.8, mem.position.z);
-      spot.target = frameMesh;
+      const spotTarget = new THREE.Object3D();
+      spotTarget.position.set(mem.position.x, mem.position.y, mem.position.z);
+      scene.add(spotTarget);
+      spot.target = spotTarget;
       scene.add(spot);
-      scene.add(spot.target);
 
       // Hovering Floating Indicator Heart (lights up on proximity)
       const heartGeom = createMiniHeartGeom();
@@ -796,7 +801,8 @@
     portraitGroup.add(queenFrame);
 
     const ranuLargeTex = textureLoader.load('images/museum/mphoto13.jpg');
-    ranuLargeTex.colorSpace = THREE.SRGBColorSpace;
+    if (THREE.SRGBColorSpace) ranuLargeTex.colorSpace = THREE.SRGBColorSpace;
+    else if (THREE.sRGBEncoding) ranuLargeTex.encoding = THREE.sRGBEncoding;
     const ranuLargeMat = new THREE.MeshBasicMaterial({ map: ranuLargeTex });
     const ranuLargeCanvas = new THREE.Mesh(new THREE.PlaneGeometry(5.8, 7.2), ranuLargeMat);
     ranuLargeCanvas.position.z = 0.09;
@@ -991,6 +997,7 @@
     // Torso / Dress
     const dressTop = new THREE.Mesh(new THREE.BoxGeometry(0.68, 0.85, 0.38), dressMat);
     dressTop.position.y = 1.55;
+    dressTop.userData = { baseY: 1.55 };
     coupleGroup.add(dressTop);
 
     // Dress Skirt Flare (Cone/Cylinder)
@@ -1068,7 +1075,7 @@
     legR.add(shoeR);
     coupleGroup.add(legR);
 
-    coupleGroup.userData = { armL, armR, legL, legR, dressTop, headGroup };
+    coupleGroup.userData = { armL, armR, legL, legR, torso: dressTop, dressTop, headGroup };
     return coupleGroup;
   }
 
@@ -1325,17 +1332,23 @@
   const clock = new THREE.Clock();
 
   function startRenderLoop() {
+    if (animationFrameId) {
+      cancelAnimationFrame(animationFrameId);
+      animationFrameId = null;
+    }
     function animate() {
       if (!isMuseumActive) return;
       animationFrameId = requestAnimationFrame(animate);
 
       const delta = Math.min(clock.getDelta(), 0.1);
-      updateCoupleMovement(delta);
-      updateThirdPersonCamera();
-      updateAtmosphere(delta);
-      checkProximity();
+      try { updateCoupleMovement(delta); } catch(err) { console.error('Walk movement error:', err); }
+      try { updateThirdPersonCamera(); } catch(err) { console.error('Camera error:', err); }
+      try { updateAtmosphere(delta); } catch(err) { console.error('Atmosphere error:', err); }
+      try { checkProximity(); } catch(err) { console.error('Proximity error:', err); }
 
-      renderer.render(scene, camera);
+      if (renderer && scene && camera) {
+        renderer.render(scene, camera);
+      }
     }
     animate();
   }
@@ -1440,23 +1453,29 @@
   }
 
   function animateWalkCycle(character, timer, isWalking) {
+    if (!character || !character.userData) return;
     const { armL, armR, legL, legR, torso } = character.userData;
-    if (!armL || !armR || !legL || !legR) return;
 
     if (isWalking) {
       const swing = Math.sin(timer);
-      legL.rotation.x = swing * 0.52;
-      legR.rotation.x = -swing * 0.52;
-      armL.rotation.x = -swing * 0.38;
-      armR.rotation.x = swing * 0.38;
-      torso.position.y = 1.65 + Math.abs(Math.sin(timer * 2)) * 0.06;
+      if (legL) legL.rotation.x = swing * 0.52;
+      if (legR) legR.rotation.x = -swing * 0.52;
+      if (armL) armL.rotation.x = -swing * 0.38;
+      if (armR) armR.rotation.x = swing * 0.38;
+      if (torso) {
+        const baseY = torso.userData?.baseY || 1.6;
+        torso.position.y = baseY + Math.abs(Math.sin(timer * 2)) * 0.05;
+      }
     } else {
       // Smooth return to idle upright stance
-      legL.rotation.x *= 0.85;
-      legR.rotation.x *= 0.85;
-      armL.rotation.x *= 0.85;
-      armR.rotation.x *= 0.85;
-      torso.position.y = THREE.MathUtils.lerp(torso.position.y, 1.65, 0.1);
+      if (legL) legL.rotation.x *= 0.85;
+      if (legR) legR.rotation.x *= 0.85;
+      if (armL) armL.rotation.x *= 0.85;
+      if (armR) armR.rotation.x *= 0.85;
+      if (torso) {
+        const baseY = torso.userData?.baseY || 1.6;
+        torso.position.y = THREE.MathUtils.lerp(torso.position.y, baseY, 0.1);
+      }
     }
   }
 
@@ -1577,9 +1596,10 @@
     initMuseum();
   }
 
-  // Expose methods for direct invocation
+  // Expose methods & 3D objects for inspection
   window.enterMuseum = enterMuseum;
   window.exitMuseum = exitMuseum;
   window.initMuseum = initMuseum;
+  window.getMuseumScene = () => ({ scene, camera, renderer, swayamMesh, ranuMesh });
 
 })();
