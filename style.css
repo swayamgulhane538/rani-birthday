@@ -4155,3 +4155,504 @@ body {
 }
 
 
+
+
+/* ==========================================================================
+   OUR MEMORY MUSEUM - 3D WALKTHROUGH STYLES
+   ========================================================================== */
+
+/* 1. Main Website Portal Buttons */
+.museum-portal-box {
+  margin: 32px auto 25px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 5;
+}
+
+.museum-portal-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 36px;
+  background: linear-gradient(135deg, #3d071a 0%, #681132 50%, #2b0616 100%);
+  border: 1.5px solid var(--gold-accent);
+  border-radius: 50px;
+  color: var(--gold-light);
+  font-family: var(--font-sans);
+  font-size: clamp(1rem, 3vw, 1.25rem);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6), var(--glow-gold);
+  transition: var(--transition-bounce);
+  position: relative;
+  overflow: hidden;
+}
+.museum-portal-btn::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.25), transparent);
+  transition: 0.6s;
+}
+.museum-portal-btn:hover::before {
+  left: 100%;
+}
+.museum-portal-btn:hover {
+  transform: translateY(-4px) scale(1.04);
+  border-color: var(--gold-glow);
+  box-shadow: 0 16px 45px rgba(223, 177, 91, 0.55);
+}
+.portal-btn-icon { font-size: 1.4rem; }
+.portal-btn-heart {
+  font-size: 1.2rem;
+  animation: heartThrob 1.2s infinite;
+}
+.portal-btn-hint {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  font-style: italic;
+  margin-top: 10px;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
+}
+
+/* 2. Fullscreen Museum Container */
+.museum-overlay {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  z-index: 10000;
+  background: #0e0209;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+  opacity: 0;
+  transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.museum-overlay.active {
+  opacity: 1;
+}
+
+#museumCanvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  outline: none;
+  touch-action: none;
+}
+
+/* 3. Museum HUD Top Bar */
+.museum-hud-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 18px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(180deg, rgba(14, 2, 9, 0.85) 0%, rgba(14, 2, 9, 0) 100%);
+  pointer-events: none;
+  z-index: 20;
+}
+.museum-hud-top * {
+  pointer-events: auto;
+}
+
+.museum-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.museum-logo-icon {
+  font-size: 1.8rem;
+  filter: drop-shadow(0 0 10px rgba(223, 177, 91, 0.6));
+}
+.museum-title-wrap {
+  display: flex;
+  flex-direction: column;
+}
+.museum-hud-title {
+  font-family: var(--font-serif);
+  font-size: clamp(1rem, 2.8vw, 1.35rem);
+  color: var(--gold-light);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+.museum-hud-room {
+  font-size: 0.76rem;
+  color: var(--rose-pink);
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+
+.museum-top-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.museum-ctrl-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(45, 9, 25, 0.7);
+  border: 1px solid rgba(223, 177, 91, 0.35);
+  color: var(--gold-light);
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: var(--transition-bounce);
+}
+.museum-ctrl-btn:hover {
+  background: var(--gold-accent);
+  color: #14020a;
+  transform: scale(1.08);
+}
+
+.museum-exit-btn {
+  padding: 8px 18px;
+  border-radius: 30px;
+  background: rgba(50, 10, 25, 0.85);
+  border: 1.5px solid var(--rose-pink);
+  color: #fff;
+  font-family: var(--font-sans);
+  font-size: 0.86rem;
+  font-weight: 600;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  transition: var(--transition-bounce);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+.museum-exit-btn:hover {
+  background: #c2185b;
+  border-color: #ffd700;
+  transform: scale(1.05);
+}
+
+/* 4. Controls Toast */
+.museum-controls-toast {
+  position: absolute;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(25, 4, 15, 0.88);
+  border: 1px solid rgba(223, 177, 91, 0.4);
+  border-radius: 30px;
+  padding: 10px 24px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  backdrop-filter: blur(14px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+  pointer-events: none;
+  z-index: 15;
+  transition: opacity 0.6s ease;
+}
+.toast-item {
+  font-size: 0.82rem;
+  color: var(--cream-white);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.toast-item kbd {
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 6px;
+  padding: 2px 7px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--gold-light);
+}
+
+/* 5. Interaction Prompt Banner */
+.museum-interaction-prompt {
+  position: absolute;
+  bottom: 110px;
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: none;
+  z-index: 25;
+  animation: promptPulse 1.8s infinite ease-in-out;
+}
+@keyframes promptPulse {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(-6px); }
+}
+.prompt-inner {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(30, 4, 18, 0.9);
+  border: 1.5px solid var(--gold-glow);
+  border-radius: 40px;
+  padding: 10px 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), var(--glow-gold);
+  backdrop-filter: blur(14px);
+  color: var(--cream-white);
+  font-size: 0.92rem;
+}
+.prompt-inner strong {
+  color: var(--gold-glow);
+}
+
+/* 6. Mobile Joystick Controls */
+.mobile-joystick-zone {
+  position: absolute;
+  bottom: 24px;
+  left: 20px;
+  width: 140px;
+  height: 140px;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: none;
+}
+.joystick-base {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(60, 10, 30, 0.6) 0%, rgba(20, 2, 10, 0.75) 100%);
+  border: 2px solid rgba(223, 177, 91, 0.5);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6), inset 0 2px 8px rgba(255, 215, 0, 0.2);
+  position: relative;
+  backdrop-filter: blur(8px);
+}
+.joystick-thumb {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--gold-light) 0%, var(--gold-accent) 60%, #b76e79 100%);
+  border: 2px solid #fff;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.7), 0 0 15px rgba(223, 177, 91, 0.6);
+  pointer-events: none;
+  transition: transform 0.04s ease-out;
+}
+
+/* 7. Mobile Camera Drag Zone */
+.mobile-camera-zone {
+  position: absolute;
+  top: 70px;
+  right: 0;
+  bottom: 0;
+  width: 55vw;
+  z-index: 10;
+  touch-action: none;
+}
+
+/* 8. Mobile Action Button */
+.mobile-action-zone {
+  position: absolute;
+  bottom: 30px;
+  right: 24px;
+  z-index: 35;
+}
+.mobile-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 22px;
+  background: linear-gradient(135deg, #d81b60 0%, #ad1457 50%, #6a1b9a 100%);
+  border: 1.5px solid var(--gold-glow);
+  border-radius: 40px;
+  color: #fff;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  font-weight: 700;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.7), var(--glow-rose);
+  cursor: pointer;
+}
+.mobile-action-btn:active {
+  transform: scale(0.95);
+}
+
+/* 9. Inspection Modals */
+.museum-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10005;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.museum-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 1, 6, 0.88);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.museum-modal-card {
+  position: relative;
+  z-index: 2;
+  max-width: 540px;
+  width: 100%;
+  background: var(--bg-wine-mid);
+  border: 1.5px solid var(--gold-accent);
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), var(--glow-gold);
+  display: flex;
+  flex-direction: column;
+  animation: modalPopIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes modalPopIn {
+  from { opacity: 0; transform: scale(0.88) translateY(20px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.museum-modal-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #fff;
+  font-size: 1.3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: var(--transition-bounce);
+}
+.museum-modal-close:hover {
+  background: #d81b60;
+  transform: scale(1.1);
+}
+
+.modal-room-tag {
+  position: absolute;
+  top: 16px;
+  left: 18px;
+  background: rgba(20, 2, 10, 0.85);
+  border: 1px solid var(--gold-accent);
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--gold-light);
+  letter-spacing: 1px;
+  z-index: 5;
+}
+
+.modal-img-container {
+  width: 100%;
+  height: min(380px, 46vh);
+  background: #000;
+  overflow: hidden;
+  position: relative;
+}
+.modal-img-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.modal-caption-box {
+  padding: 20px 24px 24px;
+  background: linear-gradient(180deg, rgba(35, 6, 20, 0.95) 0%, rgba(20, 2, 12, 0.98) 100%);
+}
+.modal-photo-title {
+  font-family: var(--font-serif);
+  font-size: 1.35rem;
+  color: var(--cream-white);
+  margin-bottom: 4px;
+}
+.modal-photo-date {
+  font-size: 0.8rem;
+  color: var(--gold-accent);
+  display: block;
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+.modal-photo-desc {
+  font-size: 0.92rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* 10. Final Birthday Surprise Card */
+.museum-surprise-card {
+  position: relative;
+  z-index: 2;
+  max-width: 520px;
+  width: 100%;
+  background: radial-gradient(circle, #38081f 0%, #17020d 100%);
+  border: 2px solid var(--gold-glow);
+  border-radius: 26px;
+  padding: 36px 30px;
+  text-align: center;
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.85), var(--glow-gold);
+  animation: modalPopIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.surprise-crown { font-size: 2.8rem; margin-bottom: 6px; }
+.surprise-title {
+  font-family: var(--font-script);
+  font-size: clamp(2.2rem, 6vw, 3.4rem);
+  color: var(--gold-glow);
+  margin-bottom: 4px;
+}
+.surprise-subtitle {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.05rem;
+  color: var(--rose-pink);
+  margin-bottom: 22px;
+}
+.surprise-letter-body {
+  font-size: 0.95rem;
+  color: var(--cream-white);
+  line-height: 1.7;
+  text-align: left;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 18px 20px;
+  border-radius: 16px;
+  border-left: 3px solid var(--gold-accent);
+  margin-bottom: 20px;
+}
+.surprise-letter-body p { margin-bottom: 10px; }
+.surprise-letter-body p:last-child { margin-bottom: 0; }
+.surprise-signature {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+.surprise-signature strong {
+  color: var(--gold-light);
+  font-size: 1.15rem;
+  font-family: var(--font-serif);
+}
+
+@media (max-width: 600px) {
+  .museum-controls-toast { display: none !important; }
+  .museum-hud-top { padding: 12px 14px; }
+  .museum-exit-btn { padding: 6px 14px; font-size: 0.78rem; }
+  .modal-caption-box { padding: 16px 18px; }
+  .museum-surprise-card { padding: 26px 20px; }
+}

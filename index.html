@@ -185,6 +185,16 @@
           </div>
         </div>
 
+        <!-- OUR MEMORY MUSEUM 3D EXPERIENCE PORTAL -->
+        <div class="museum-portal-box">
+          <button id="heroOpenMuseumBtn" class="museum-portal-btn pulse-glow" aria-label="Walk Through Our Memories" onclick="window.enterMuseum && window.enterMuseum()">
+            <span class="portal-btn-icon">🏛️</span>
+            <span class="portal-btn-text">Walk Through Our Memories</span>
+            <span class="portal-btn-heart">❤️</span>
+          </button>
+          <span class="portal-btn-hint">✨ Immersive 3D Walkthrough with Swayam &amp; Ranu ✨</span>
+        </div>
+
         <!-- FEATURE 5: LIVE BIRTHDAY COUNTDOWN 🎂 -->
         <div class="countdown-wrapper" id="countdownWrapper">
           <div class="countdown-header">
@@ -307,6 +317,13 @@
         <span class="section-tag">✨ OUR SWEET MOMENTS ✨</span>
         <h2 class="section-title">3 Months of Pure Magic</h2>
         <p class="section-subtitle">Swipe or tap any photo to relive our sweetest memories together</p>
+        <div style="text-align: center; margin-top: 14px; margin-bottom: 5px;">
+          <button id="openMuseumBtn" class="museum-portal-btn" onclick="window.enterMuseum && window.enterMuseum()" style="padding: 12px 28px; font-size: 1rem;">
+            <span>🏛️</span>
+            <span>Walk Through 3D Museum</span>
+            <span class="portal-btn-heart">❤️</span>
+          </button>
+        </div>
       </div>
 
       <!-- 3D Carousel Container -->
@@ -1766,7 +1783,104 @@
 
   </main>
 
-  <!-- JavaScript Main Application -->
+  <!-- ==============================================
+       OUR MEMORY MUSEUM: 3D INTERACTIVE WALKTHROUGH
+       ============================================== -->
+  <div id="museumOverlay" class="museum-overlay" style="display: none;" aria-hidden="true">
+    <!-- WebGL Canvas for Three.js -->
+    <canvas id="museumCanvas"></canvas>
+
+    <!-- Museum Top HUD -->
+    <header class="museum-hud-top">
+      <div class="museum-brand">
+        <span class="museum-logo-icon">🏛️</span>
+        <div class="museum-title-wrap">
+          <h2 class="museum-hud-title">Our Memory Museum</h2>
+          <span class="museum-hud-room" id="museumCurrentRoom">Grand Rotunda • Room 1: Our Beginning</span>
+        </div>
+      </div>
+      <div class="museum-top-controls">
+        <button id="museumMusicBtn" class="museum-ctrl-btn" aria-label="Toggle Museum Music" title="Sound On / Off">
+          <span id="museumMusicIcon">🎵</span>
+        </button>
+        <button id="museumFullscreenBtn" class="museum-ctrl-btn" aria-label="Toggle Fullscreen" title="Fullscreen">
+          <span>⛶</span>
+        </button>
+        <button id="closeMuseumBtn" class="museum-exit-btn" aria-label="Exit Museum" onclick="window.exitMuseum && window.exitMuseum()">
+          ✕ Exit Museum
+        </button>
+      </div>
+    </header>
+
+    <!-- Controls Toast Hint (fades out after 7s or on movement) -->
+    <div id="museumControlsToast" class="museum-controls-toast">
+      <span class="toast-icon">✨</span>
+      <span><strong>WASD / Arrow Keys</strong> to Walk with Ranu • <strong>Mouse Drag</strong> to Look • <strong>[E]</strong> to View Memories</span>
+    </div>
+
+    <!-- Proximity Interaction Prompt -->
+    <div id="museumInteractPrompt" class="museum-interact-prompt" style="display: none;">
+      <span class="prompt-glow-heart">❤️</span>
+      <span class="prompt-text">Press <strong>[E]</strong> or Tap Button to View Memory</span>
+    </div>
+
+    <!-- Mobile Virtual Joystick Zone (Bottom-Left) -->
+    <div id="mobileJoystickZone" class="mobile-joystick-zone">
+      <div id="joystickBase" class="joystick-base">
+        <div id="joystickThumb" class="joystick-thumb"></div>
+      </div>
+      <span class="joystick-label">Walk</span>
+    </div>
+
+    <!-- Mobile Camera Swipe Zone (Right Half) -->
+    <div id="mobileCameraZone" class="mobile-camera-zone"></div>
+
+    <!-- Mobile Action Button (Bottom-Right, shows when near photo or surprise) -->
+    <div class="mobile-action-zone">
+      <button id="mobileActionBtn" class="mobile-action-btn" style="display: none;">
+        <span class="act-icon">❤️</span>
+        <span class="act-text">View Memory</span>
+      </button>
+    </div>
+
+    <!-- 1. Photo Detail Modal -->
+    <div id="museumPhotoModal" class="museum-modal" style="display: none;">
+      <div id="museumModalBackdrop" class="museum-modal-backdrop"></div>
+      <div class="museum-modal-card">
+        <button id="museumModalCloseBtn" class="museum-modal-close" aria-label="Close Photo">✕</button>
+        <span id="modalRoomTag" class="modal-room-tag">Room 1: Our Beginning</span>
+        <div class="modal-img-container">
+          <img id="modalPhotoImg" src="" alt="Memory Photo" loading="eager" />
+        </div>
+        <div class="modal-caption-box">
+          <h3 id="modalPhotoTitle" class="modal-photo-title">Special Memory</h3>
+          <span id="modalPhotoDate" class="modal-photo-date">2026</span>
+          <p id="modalPhotoDesc" class="modal-photo-desc">Romantic caption text here...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Final Birthday Surprise Modal -->
+    <div id="museumSurpriseModal" class="museum-modal" style="display: none;">
+      <div id="museumSurpriseBackdrop" class="museum-modal-backdrop"></div>
+      <div class="museum-surprise-card">
+        <button id="museumSurpriseCloseBtn" class="museum-modal-close" aria-label="Close Surprise">✕</button>
+        <div class="surprise-crown">👑</div>
+        <h3 class="surprise-title">Happy Birthday Meri Jaan!</h3>
+        <p class="surprise-subtitle">To Ranu, From Swayam with All My Love ❤️</p>
+        <div class="surprise-letter-body" id="surpriseLetterBody">
+          <!-- Populated by museum.js -->
+        </div>
+        <div class="surprise-signature">
+          <span>Forever &amp; Always Yours,</span>
+          <strong>Swayam ❤️</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript Main Application & Museum -->
   <script src="script.js"></script>
+  <script src="museum.js"></script>
 </body>
 </html>
